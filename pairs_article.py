@@ -144,8 +144,8 @@ symbols = ['bac', 'gs', 'c', 'ms', 'xlf', 'spy']
 #####################################################################
 #####################################################################
 
-test_token = "your test token goes here"    # test token
-pub_token = "your pub token goes here"   # public token
+test_token = "YOUR TEST TOKEN GOES HERE"    # test token
+pub_token = "YOUR PUB TOKEN GOES HERE"   # public token
 plot_range = "/chart/3m" ;   # 1m, 3m, 6m, 1y, 2y, 5y
 close_only = "&chartCloseOnly=true"   ### limit message cost to 2 per sample
 pub_url = "https://cloud.iexapis.com/stable/stock/"
