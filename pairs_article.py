@@ -159,8 +159,9 @@ print('getting data ... ')
 n = len(symbols)
 for i in range(n):
     sym = symbols[i]
-    url = sandbox_url + sym + plot_range + "?token=" + test_token + close_only 
- #   url = pub_url + sym + plot_range + "?token=" + pub_token + close_only 
+ ############    set default to use pub key   #################
+ #    url = sandbox_url + sym + plot_range + "?token=" + test_token + close_only 
+    url = pub_url + sym + plot_range + "?token=" + pub_token + close_only 
     print (symbols[i])
     data = requests.get(url)   # get data
     buf = io.StringIO(data.text) # create a buffer
