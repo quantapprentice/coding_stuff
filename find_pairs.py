@@ -138,14 +138,14 @@ def parse_json(json_data):
 #####################################################################
 #   put symbols here - be careful not to duplicate symbols.
 
-symbols = ['bac', 'gs', 'c', 'ms', 'xlf', 'spy']
-#symbols = ['intc', 'nvda', 'mu', 'spy', 'amd', 'xlnx']
+#symbols = ['bac', 'gs', 'c', 'ms', 'xlf', 'spy']
+symbols = ['intc', 'nvda', 'mu', 'amd', 'xlnx', 'msft']
 
 #####################################################################
 #####################################################################
 
 test_token = "YOUR TEST TOKEN GOES HERE"    # test token
-pub_token = "your pub token goes here"   # public token
+pub_token = "YOUR PUB TOKEN GOES HERE"   # public token
 plot_range = "/chart/3m" ;   # 1m, 3m, 6m, 1y, 2y, 5y
 close_only = "&chartCloseOnly=true"   ### limit message cost to 2 per sample
 pub_url = "https://cloud.iexapis.com/stable/stock/"
@@ -159,8 +159,7 @@ print('getting data ... ')
 n = len(symbols)
 for i in range(n):
     sym = symbols[i]
- ############    set default to use pub key   #################
- #    url = sandbox_url + sym + plot_range + "?token=" + test_token + close_only 
+#    url = sandbox_url + sym + plot_range + "?token=" + test_token + close_only 
     url = pub_url + sym + plot_range + "?token=" + pub_token + close_only 
     print (symbols[i])
     data = requests.get(url)   # get data
@@ -217,7 +216,7 @@ plt.title("Cointegrated Pairs")
 plt.plot()
 plt.subplot(2,2,2)
 
-# do correlation
+# do dorrelation
 ### dataframe.corr parameters: dataframe.corr(method='',min_periods=1)
 ### method: {'pearson', 'kendall', 'spearman'} or callable
 print("\nCorrelation Matrix")
@@ -248,11 +247,11 @@ series_b = df_combined[first_pair[1]]
 series_a= sm.add_constant(series_a.values)
 results = sm.OLS(series_b, series_a).fit()  # ordinary least squares
 series_a = df_combined[first_pair[0]]
-ols_df = pd.read_html(results.summary().tables[1].as_html(),header=0,index_col=0)[0]
-print('\nOLS dataframe')
-print(ols_df)
-a=ols_df['coef'].values[1]
-b=ols_df['coef'].values[0]
+
+coeff = results.params
+b = results.params[0]
+a = results.params[1]
+
 print('\n results of ordinary least squares ')
 print('slope =  '+ str(a))  # slope (or multiplier from linear regression) mult series_a by this value
 print('intercept =  '+ str(b))  # intercept
@@ -282,6 +281,7 @@ plt.grid('on', linestyle='--', alpha=0.5)
 
 norm_df = df_combined.copy()
 print(norm_df.head(10))
+#norm_df = norm_df.divide(norm_df.ix[0])
 norm_df = norm_df.divide(norm_df.iloc[0])
 print('\n')
 print(norm_df.head(10))
@@ -294,7 +294,7 @@ series_b.plot()
 plt.title("relative performance of "  + first_pair[0] + " and  " + first_pair[1]) 
 plt.legend()
 #####   save graph to a png file
-#plt.savefig("coint_corr.png")   # save graph to png file
+plt.savefig("coint_corr.png")   # save graph to png file
 plt.show()
 
 #### plot the difference of the normalized series
@@ -307,5 +307,19 @@ plt.axhline(0.0, color='green', linestyle='--')
 plt.title("difference of normalized "  + first_pair[0] + " minus  " + first_pair[1]) 
 plt.ylabel("diff")
 plt.grid('on', linestyle='--', alpha=0.5)
+plt.show()
+# check to see if a linear relationship exists between the pair. if so,
+# it's a candidate for OLS and ADF test
+# residuals are the difference between the 2 series multiplied by any ratio factoe.
+# plot the single series residual and run ADF on that series
+# res = ols(y=df['WLL'], x=df["AREX"])
+# beta_hr = res.beta.x
+# print(" beta_hr = " + str(beta_hr))
+# # Calculate the residuals of the linear combination
+#    df["res"] = df["WLL"] - beta_hr*df["AREX"]
+# cadf = ts.adfuller(df["res"])  # residuals in df[]
+#    pprint.pprint(cadf)
+    
+plt.scatter(df_combined[first_pair[0]], df_combined[first_pair[1]])  
 plt.show()
 
